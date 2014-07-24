@@ -85,20 +85,22 @@ class RunDockerTop(object):
                 except:
                     del pids[k]
                     pass
-            s.addstr(2, 2, "CID")
-            s.addstr(2, 18, "CPU")
-            s.addstr(2, 25, "VM")
-            s.addstr(2, 32, "RSS")
-            s.addstr(2, 38, "EXE")
-            s.addstr(2, 55, "UPTIME")
+            s.addstr(2, 2, "NAME")
+            s.addstr(2, 18, "CID")
+            s.addstr(2, 34, "CPU")
+            s.addstr(2, 41, "VM")
+            s.addstr(2, 48, "RSS")
+            s.addstr(2, 54, "EXE")
+            s.addstr(2, 71, "UPTIME")
             cid_line = 4
             for cid in output:
-                s.addstr(cid_line, 2, cid[:12])
-                s.addstr(cid_line, 18, str(output[cid]['cpu']))
-                s.addstr(cid_line, 25, output[cid]['vm'])
-                s.addstr(cid_line, 32, output[cid]['rss'])
-                s.addstr(cid_line, 38, output[cid]['exe'])
-                s.addstr(cid_line, 55, output[cid]['rtime'])
+                s.addstr(cid_line, 2, c.inspect_container(cid)['Name'])
+                s.addstr(cid_line, 18, cid[:12])
+                s.addstr(cid_line, 34, str(output[cid]['cpu']))
+                s.addstr(cid_line, 41, output[cid]['vm'])
+                s.addstr(cid_line, 48, output[cid]['rss'])
+                s.addstr(cid_line, 54, output[cid]['exe'])
+                s.addstr(cid_line, 71, output[cid]['rtime'])
                 cid_line += 1
             s.refresh()
             x = s.getch()
