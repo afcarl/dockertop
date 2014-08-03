@@ -77,6 +77,7 @@ class RunDockerTop(object):
                     cpu = p.get_cpu_percent()
                     exe = p.exe()
                     ctime = time() - p.create_time()
+                    output[k]['name'] = c.inspect_container(cid)['Name']
                     output[k]['vm'] = "{:.2f}".format(float(mem[0]) / 1024 / 1024)
                     output[k]['rss'] = "{:.2f}".format(float(mem[1]) / 1024 / 1024)
                     output[k]['cpu'] = cpu
@@ -94,7 +95,7 @@ class RunDockerTop(object):
             s.addstr(2, 71, "UPTIME")
             cid_line = 4
             for cid in output:
-                s.addstr(cid_line, 2, c.inspect_container(cid)['Name'])
+                s.addstr(cid_line, 2, output[cid]['name'])
                 s.addstr(cid_line, 18, cid[:12])
                 s.addstr(cid_line, 34, str(output[cid]['cpu']))
                 s.addstr(cid_line, 41, output[cid]['vm'])
