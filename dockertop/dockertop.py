@@ -68,40 +68,57 @@ class RunDockerTop(object):
             for container in running:
                 inspect = c.inspect_container(container['Id'])
                 pids[container['Id']] = inspect['State']['Pid']
-            for k in pids:
-                output[k] = {}
+            for k in pids.copy():
                 v = pids[k]
-                try:
+                if psutil.pid_exists(v):
                     p = psutil.Process(v)
-                    mem = p.get_memory_info()
-                    cpu = p.get_cpu_percent()
-                    exe = p.exe()
-                    ctime = time() - p.create_time()
-                    output[k]['name'] = c.inspect_container(cid)['Name']
-                    output[k]['vm'] = "{:.2f}".format(float(mem[0]) / 1024 / 1024)
-                    output[k]['rss'] = "{:.2f}".format(float(mem[1]) / 1024 / 1024)
-                    output[k]['cpu'] = cpu
-                    output[k]['rtime'] = str("{:.3f}".format(ctime / 60))
-                    output[k]['exe'] = exe
-                except:
-                    del pids[k]
-                    pass
+                    output[k] = {}
+                    try:
+                        mem = p.get_memory_info()
+                        cpu = p.get_cpu_percent()
+                        exe = p.exe()
+                        ctime = time() - p.create_time()
+                    except:
+                        logging.info('PID %s disappeared' % v)
+                        del output[k]
+                        del pids[k]
+                    try:
+                        output[k]['name'] = c.inspect_container(k)['Name'][0:16]
+                        output[k]['vm'] = "{:.2f}".format(float(mem[0]) / 1024 / 1024)
+                        output[k]['rss'] = "{:.2f}".format(float(mem[1]) / 1024 / 1024)
+                        output[k]['cpu'] = cpu
+                        output[k]['rtime'] = str("{:.3f}".format(ctime / 60))
+                        output[k]['exe'] = exe
+                    except:
+                        logging.info('Container %s disappeared' % k)
+                        try:
+                            del output[k]
+                            del pids[k]
+                        except:
+                            pass
+                else:
+                    logging.info('PID %s disappeared' % v)
+                    try:
+                        del output[k]
+                        del pids[k]
+                    except:
+                        pass
             s.addstr(2, 2, "NAME")
-            s.addstr(2, 18, "CID")
-            s.addstr(2, 34, "CPU")
-            s.addstr(2, 41, "VM")
-            s.addstr(2, 48, "RSS")
-            s.addstr(2, 54, "EXE")
-            s.addstr(2, 71, "UPTIME")
+            s.addstr(2, 19, "CID")
+            s.addstr(2, 35, "CPU")
+            s.addstr(2, 42, "VM")
+            s.addstr(2, 49, "RSS")
+            s.addstr(2, 55, "EXE")
+            s.addstr(2, 72, "UPTIME")
             cid_line = 4
             for cid in output:
                 s.addstr(cid_line, 2, output[cid]['name'])
-                s.addstr(cid_line, 18, cid[:12])
-                s.addstr(cid_line, 34, str(output[cid]['cpu']))
-                s.addstr(cid_line, 41, output[cid]['vm'])
-                s.addstr(cid_line, 48, output[cid]['rss'])
-                s.addstr(cid_line, 54, output[cid]['exe'])
-                s.addstr(cid_line, 71, output[cid]['rtime'])
+                s.addstr(cid_line, 19, cid[:12])
+                s.addstr(cid_line, 35, str(output[cid]['cpu']))
+                s.addstr(cid_line, 42, output[cid]['vm'])
+                s.addstr(cid_line, 49, output[cid]['rss'])
+                s.addstr(cid_line, 55, output[cid]['exe'])
+                s.addstr(cid_line, 72, output[cid]['rtime'])
                 cid_line += 1
             s.refresh()
             x = s.getch()
