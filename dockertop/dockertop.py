@@ -1,12 +1,6 @@
 #!/usr/bin/python
 
-import os, sys
-import signal
-import yaml
-import curses
-import docker
-import logging
-import psutil
+import os,sys,signal,yaml,curses,docker,logging,psutil
 from time import time
 from argparse import ArgumentParser
 
@@ -128,8 +122,10 @@ class RunDockerTop(object):
             
 
 def main():
+    rcdefault = os.path.expanduser('~') + '/.dockertoprc'
     parser = ArgumentParser(description='Dockertop %s' % __version__)
-    parser.add_argument('-c', dest='config_path', help='Path to your config file', default='~/.dockertoprc')
+    parser.add_argument('-c', dest='config_path', help='Path to your config file',
+                         default=rcdefault)
     args = parser.parse_args()
     config_path = os.path.expanduser(args.config_path)
     #run
