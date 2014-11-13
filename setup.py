@@ -1,6 +1,7 @@
 import os
 import shutil
 from setuptools import setup, find_packages
+from dockertop import version as __version__
 
 config_file = os.path.expanduser('~/.dockertoprc')
 
@@ -17,7 +18,7 @@ requires = [
     ]
 
 setup(name='dockertop',
-        version='0.0',
+        version=__version__,
         description='A toplike utility for Docker container monitoring',
         long_description=README,
         author='Bradley Cicenas',
