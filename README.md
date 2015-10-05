@@ -1,7 +1,7 @@
 dockertop
 =========
 
-NOTE: This project has been deprecated in favor of https://github.com/bcicen/statsquid
+**NOTE:** This project has been deprecated in favor of https://github.com/bcicen/statsquid
 
 A top-like docker container monitor written in python.
 
